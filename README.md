@@ -1,20 +1,20 @@
-## DOCKER MULTIE TIER
+## DOCKER MULTITEER
 
 # PORTAINER
-You will rnu this once, as portainer listen to global docker
+You will run this once, as portainer listens to the global Docker
 ```
 cd portainer
 docker-compose up -d
 ```
 
 # PROXY TIER
-You will rnu this once, as nginx proxy listen to global docker
+You will run this once, as the nginx proxy listens to the  global Docker
 ```
 cd proxy-tier
 docker-compose up -d
 ```
 
-How to bind your domain with nginx proxy, just add these environments to per service
+How to bind your domain with nginx proxy, just add these environments to the per service
 
 ```
 services:
@@ -30,7 +30,7 @@ services:
 
 ```
 
-Then very important is to use the proxy nginx external network for your services
+Then is very important to use the proxy nginx external network for your services
 
 ```
 
@@ -41,7 +41,7 @@ networks:
 
 services:
     ...
-    # then add the network to each service
+    # Then add the network to each service
     your-service-app:
       networks:
         - proxy-tier_nginx
@@ -49,9 +49,9 @@ services:
 ```
 
 # PROJECT TIER
-Now this is a custom project scoped for you project, but the basic containers are included hre to get you started
+Now this is a custom project scoped for your project, but the basic containers are included here to get you started
 
 Cheers! :) 
 
-For more information reach our to john henry antona and josel mariano
+For more information, reach out to John Henry Antona
 
