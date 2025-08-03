@@ -1,0 +1,24 @@
+version: '3'
+
+volumes:
+  mongo_data:
+    driver: ${VOLUMES_DRIVER}
+  mongo_config:
+    driver: ${VOLUMES_DRIVER}
+
+services:
+
+### PORTAINER ##################################
+
+  mongodbservice:
+    image: mongo:8.0 
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017" # Expose MongoDB on the default port
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USER} # Set the admin username
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD} # Set the admin password
+    volumes:
+      - mongo_data:/data/db # Persist MongoDB data
+      - mongo_config:/data/configdb # Persist MongoDB configuration

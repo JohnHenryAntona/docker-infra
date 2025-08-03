@@ -1,0 +1,65 @@
+version: '3'
+
+networks:
+  frontend:
+    driver: ${NETWORKS_DRIVER}
+  backend:
+    driver: ${NETWORKS_DRIVER}
+  proxy-tier_nginx:
+    external: true
+
+volumes:
+  mongodb:
+    driver: ${VOLUMES_DRIVER}
+  nginxconfig:
+    driver: ${VOLUMES_DRIVER}
+  node_modules:
+    driver: ${VOLUMES_DRIVER}
+
+services:
+
+### APP API ########################################
+    app-api:
+      image: ideaxapps/app-api
+      build:
+        context: $APP_API_PATH
+      volumes:
+        - ${APP_API_PATH}:${WEBDEVOPS_WEB_DOCUMENT_ROOT}${APP_CODE_CONTAINER_FLAG}
+        - ${APACHE_HOST_LOG_PATH}:/var/log/apache2
+      ports:
+        - "${APP_API_PORT}:443"
+      environment:
+        - VIRTUAL_HOST=${APP_API_DOMAIN}
+        - VIRTUAL_PORT=443
+        - VIRTUAL_PROTO=https
+        - CERT_NAME==${APP_API_CERT_NAME} ## Add this
+        - LOG_STDOUT=${WEBDEVOPS_WEB_LOG_STDOUT}
+        - LOG_STDERR=${WEBDEVOPS_WEB_LOG_STDERR}
+      networks:
+        - frontend
+        - backend
+        - proxy-tier_nginx
+
+### APP WEB ##################################
+    app-web:
+      image: ideaxapps/app-web
+      build:
+        context: $APP_WEB_PATH
+      command: tail -F /dev/null # Prevent container to exit
+      volumes:
+        - ${APP_WEB_PATH}:/app
+        # A volume dedicated to web modules.
+      ports:
+        - "${APP_WEB_PORT}:3000"
+      environment:
+        - CHOKIDAR_USEPOLLING=true
+        - VIRTUAL_HOST=${APP_WEB_DOMAIN}
+        - VIRTUAL_PORT=3000
+        - VIRTUAL_PROTO=https
+        - CERT_NAME==${APP_WEB_CERT_NAME} ## Add this
+      networks:
+        - frontend
+        - backend
+        - proxy-tier_nginx
+
+
